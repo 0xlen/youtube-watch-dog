@@ -1,0 +1,11 @@
+#upload-box {
+    width: 50%;
+}
+
+#uploaded-images .thumbnail .img-block {
+    width: 30%;
+    height: 126px;
+    overflow: hidden;
+    background-size:cover;
+    background-position: 50% 15%;
+}

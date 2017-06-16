@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<div id="salary">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Username</label>
+            <input id="username" class="form-control" type="text" value="pewdiepie" />
+        </div>
+        <button class="btn btn-primary btn-block" id="getUser">Fetch</button>
+
+        <hr>
+
+        <div class="form-group">
+            <label>Daily Views</label>
+            <input id="daily-views" class="form-control" type="text" value="0" />
+        </div>
+
+        <div class="form-group">
+            <label>Estimated CPM (min)</label>
+            <input id="min-cpm-range-value" class="form-control" type="text" value="0.25" />
+        </div>
+
+        <div class="form-group">
+            <label>Estimated CPM (max)</label>
+            <input id="max-cpm-range-value" class="form-control" type="text" value="0.45" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div style="text-align: center; margin: 10px 0px 10px 0px;">
+                <span style="font-size: 2.0em; color:#4eb006;">$<span id="user-min-cpm">0</span></span>
+                <span style="font-size: 2.5em;  padding: 0px 10px;"> - </span>
+                <span style="font-size: 2.0em; color:#4eb006;">$<span id="user-max-cpm">0</span></span>
+            </div>
+            <div style="text-align: center; margin: 0px 0px 30px 0px; font-size: 1.5em; color:#555; text-transform: uppercase;">
+                Estimated Daily Earnings
+            </div>
+        </div>
+        <div class="row">
+            <div style="text-align: center; margin: 30px 0px 10px 0px;">
+                <span style="font-size: 2.0em; color:#4eb006;">$<span id="user-min-cpm-monthly">0</span></span>
+                <span style="font-size: 2.5em;  padding: 0px 10px;"> - </span>
+                <span style="font-size: 2.0em; color:#4eb006;">$<span id="user-max-cpm-monthly">0</span></span>
+            </div>
+            <div style="text-align: center; margin: 0px 0px 30px 0px; font-size: 1.5em; color:#555; text-transform: uppercase;">
+                Estimated Monthly Earnings
+            </div>
+        </div>
+        <div class="row">
+            <div style="text-align: center; margin: 30px 0px 10px 0px;">
+                <span style="font-size: 2.0em; color:#4eb006;">$<span id="user-min-cpm-yearly">0</span></span>
+                <span style="font-size: 2.5em;  padding: 0px 10px;"> - </span>
+                <span style="font-size: 2.0em; color:#4eb006;">$<span id="user-max-cpm-yearly">0</span></span>
+            </div>
+            <div style="text-align: center; margin: 0px 0px 0px 0px; font-size: 1.5em; color:#555; text-transform: uppercase;">
+                Estimated Yearly Projection
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='estimate.js') }}"></script>
+<script>
+    $(function() {
+        $('#getUser').click(function(e) {
+            var url = '{{ url_for('get_salary', username='') }}';
+            $.get(url + $('#username').val(), function(data) {
+                $('#daily-views').val(data);
+                calcValue();
+            });
+        });
+        calcValue();
+    });
+</script>
+{% endblock %}

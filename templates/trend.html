@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-9" id="chart" style="height: 250px;"></div>
+    <div class="col-md-3">
+        {% if date %}
+        <h3>{{ date }}</h3>
+        {% else %}
+        <h3>Today (Past 24 hours)</h3>
+        {% endif %}
+
+        <hr>
+
+        <div class="form-group">
+            <input type="date" class="form-control" name="date" />
+        </div>
+        <button class="btn btn-primary btn-block" id="update">Update</button>
+
+        <hr>
+
+        <div class="form-group">
+            <input type="number" min="1" value="1" class="form-control" name="filter" />
+        </div>
+        <button class="btn btn-default btn-block" id="filter">Filter</button>
+    </div>
+</div>
+
+<div class="row">
+    <ol>
+        {% for trend in trends %}
+        <li>{{ trend }}</li>
+        {% endfor %}
+    </ol>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(function() {
+        var data = [];
+        {% for i in analytics %}
+        data.push({ keyword: '{{ i[0] }}', value: '{{ i[1] }}' })
+        {% endfor %}
+
+        $('#update').click(function(e) {
+            var datetime = $('input[name="date"]').val();
+            location.href = "{{ url_for('trend') }}/" + datetime;
+        });
+
+        var chart = new Morris.Bar({
+            element: 'chart',
+            data: [],
+            xkey: 'keyword',
+            ykeys: ['value'],
+            labels: ['Value']
+        });
+
+        chart.on('click', function(i, row) {
+            var google_trend = 'https://trends.google.com/trends/explore?q=';
+            window.open(google_trend + row.keyword, '_blank');
+        })
+
+        function updateFilter(filter) {
+            var filtered_data = [];
+
+            for(var index in data){
+                var value = data[index]['value'];
+                if (parseInt(value) >= filter) {
+                    filtered_data.push(data[index]);
+                }
+            }
+
+            chart.setData(filtered_data);
+        }
+
+        $('#filter').click(function(e) {
+            var filter = $('input[name="filter"]').val();
+            updateFilter(filter);
+        });
+
+        updateFilter({{ max_count }});
+
+    });
+</script>
+{% endblock %}
